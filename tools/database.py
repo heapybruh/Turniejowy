@@ -42,6 +42,25 @@ class Database():
         
         return team_name
     
+    def get_team(self, team_id: int, guild_id: int) -> Team | None:
+        self.cursor.execute("SELECT * FROM teams WHERE id = ? AND guild_id = ?", (team_id, guild_id))
+        team = self.cursor.fetchall()
+        
+        if len(team) == 0:
+            return None
+        
+        guild_id = team[0][1]
+        team_name = team[0][2]
+        team_owner_id = team[0][3]
+        
+        self.cursor.execute("SELECT * FROM members WHERE team_id = ?", (team_id, ))
+        members = self.cursor.fetchall()
+        guild = self.bot.get_guild(guild_id)
+        
+        team = Team(team_id, guild_id, [guild.get_member(x[0]) for x in members], team_name, team_owner_id)
+        
+        return team
+    
     def get_member_team(self, member: Member, guild_id: int) -> Team | None:
         self.cursor.execute("SELECT * FROM members WHERE discord_id = ? AND guild_id = ?", (member.id, guild_id))
         user = self.cursor.fetchall()

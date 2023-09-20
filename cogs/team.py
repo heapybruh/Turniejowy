@@ -99,6 +99,12 @@ class team(commands.GroupCog, name = "team"):
             if not interaction.user.guild_permissions.administrator:
                 await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
                 
+            team = tools.db.get_team(team_id, interaction.guild_id)
+            
+            if team == None:
+                await interaction.response.send_message("Team not found!", ephemeral = True)
+                return
+                
             team_name = tools.db.remove_team(team_id)
             
             await interaction.response.send_message(f"Successfully removed team **{team_name}**!")
