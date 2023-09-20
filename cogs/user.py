@@ -21,10 +21,6 @@ class user(commands.GroupCog, name = "user"):
         user: discord.Member
     ):
         try:
-            if not interaction.user.guild_permissions.administrator:
-                await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
-                return
-
             embed = tools.Embed.user(user, interaction.guild_id)
             await interaction.response.send_message(embed = embed)
         except Exception as error:
