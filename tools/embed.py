@@ -21,3 +21,9 @@ class Embed:
         embed.set_footer(text = "Turniejowy by heapy")
         
         return embed
+    
+    def success(message: str):
+        embed = discord.Embed(color = discord.Colour.from_rgb(0, 255, 0), title = "Success!", description = message, timestamp = datetime.utcnow())  
+        embed.set_footer(text = "Turniejowy by heapy")
+        
+        return embed

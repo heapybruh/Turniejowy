@@ -39,7 +39,8 @@ class team(commands.GroupCog, name = "team"):
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3, member_4, member_5], team_name, member_1.id)
             tools.db.add_team(team)
             
-            await interaction.response.send_message(f"Successfully added team **{team_name}**!")
+            embed = tools.Embed.success(f"Successfully added team **{team_name}**!")
+            await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
 
@@ -75,7 +76,8 @@ class team(commands.GroupCog, name = "team"):
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3], team_name, member_1.id)
             tools.db.add_team(team)
             
-            await interaction.response.send_message(f"Successfully added team **{team_name}**!")
+            embed = tools.Embed.success(f"Successfully added team **{team_name}**!")
+            await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
 
@@ -107,7 +109,8 @@ class team(commands.GroupCog, name = "team"):
                 
             team_name = tools.db.remove_team(team_id)
             
-            await interaction.response.send_message(f"Successfully removed team **{team_name}**!")
+            embed = tools.Embed.success(f"Successfully removed team **{team_name}**!")
+            await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
 
