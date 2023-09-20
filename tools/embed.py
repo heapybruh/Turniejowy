@@ -16,7 +16,7 @@ class Embed:
         embed.set_author(name = member.name, icon_url = member.avatar.url)
         embed.add_field(name = "Team Name", value = team.name, inline = False)
         embed.add_field(name = "Team Owner", value = f"<@{team.owner_id}>", inline = False)
-        embed.add_field(name = "Other Team Members", value = "\n".join([f"<@{x.id}>" if x.id != team.owner_id else None for x in team.members]), inline = False)
+        embed.add_field(name = "Other Team Members", value = "\n".join([f"<@{x.id}>" if x.id != team.owner_id else "" for x in team.members]), inline = False)
 
         embed.set_footer(text = "Turniejowy by heapy")
         
