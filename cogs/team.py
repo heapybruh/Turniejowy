@@ -34,6 +34,7 @@ class team(commands.GroupCog, name = "team"):
         try:
             if not interaction.user.guild_permissions.administrator:
                 await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
+                return
                 
             team_id = tools.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3, member_4, member_5], team_name, member_1.id)
@@ -70,6 +71,7 @@ class team(commands.GroupCog, name = "team"):
         try:
             if not interaction.user.guild_permissions.administrator:
                 await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
+                return
                 
             team_id = tools.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3], team_name, member_1.id)
@@ -98,6 +100,7 @@ class team(commands.GroupCog, name = "team"):
         try:
             if not interaction.user.guild_permissions.administrator:
                 await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
+                return
                 
             team = tools.db.get_team(team_id, interaction.guild_id)
             
