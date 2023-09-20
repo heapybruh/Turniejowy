@@ -1,5 +1,5 @@
 import tools
-from tools import Team
+from tools import Team, NoAdminException
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -33,8 +33,7 @@ class team(commands.GroupCog, name = "team"):
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
-                await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
-                return
+                raise NoAdminException()
                 
             team_id = tools.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3, member_4, member_5], team_name, member_1.id)
@@ -70,8 +69,7 @@ class team(commands.GroupCog, name = "team"):
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
-                await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
-                return
+                raise NoAdminException()
                 
             team_id = tools.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3], team_name, member_1.id)
@@ -99,8 +97,7 @@ class team(commands.GroupCog, name = "team"):
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
-                await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
-                return
+                raise NoAdminException()
                 
             team = tools.db.get_team(team_id, interaction.guild_id)
             
