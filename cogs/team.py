@@ -46,7 +46,7 @@ class team(commands.GroupCog, name = "team"):
     @add5.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral=True)
+            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(team_id = "Enter team's id.")
@@ -69,10 +69,10 @@ class team(commands.GroupCog, name = "team"):
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
 
-    @add5.error
+    @delete.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral=True)
+            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(team(bot))
