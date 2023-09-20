@@ -81,7 +81,7 @@ class team(commands.GroupCog, name = "team"):
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
 
-    @add5.error
+    @add3.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
