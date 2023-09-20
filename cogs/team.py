@@ -49,6 +49,42 @@ class team(commands.GroupCog, name = "team"):
             await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
+    @app_commands.describe(
+        member_1 = "Select user.",
+        member_2 = "Select user.",
+        member_3 = "Select user.",
+        team_name = "Enter team's name."
+    )
+    @app_commands.command(
+        name = "add3", 
+        description = "Adds a 3-stacked team to Database"
+    )
+    async def add3(
+        self,
+        interaction: discord.Interaction,
+        member_1: discord.Member,
+        member_2: discord.Member,
+        member_3: discord.Member,
+        team_name: str
+    ):
+        try:
+            if not interaction.user.guild_permissions.administrator:
+                await interaction.response.send_message("You don't have **__Administrator__** permission!", ephemeral = True)
+                
+            team_id = tools.db.last_team_id() + 1
+            team = Team(team_id, interaction.guild_id, [member_1, member_2, member_3], team_name, member_1.id)
+            tools.db.add_team(team)
+            
+            await interaction.response.send_message(f"Successfully added team **{team_name}**!")
+        except Exception as error:
+            await interaction.response.send_message(f"Error: {error}", ephemeral = True)
+
+    @add5.error
+    async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
+            
+    @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(team_id = "Enter team's id.")
     @app_commands.command(
         name = "delete", 
