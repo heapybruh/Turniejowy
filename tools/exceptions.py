@@ -12,3 +12,8 @@ class NoAdminException(Exception):
     def __init__(self):
         self.message = "You don't have **__Administrator__** permission!"
         super().__init__(self.message)
+        
+class TooSmallTeamException(Exception):
+    def __init__(self):
+        self.message = "The team is too small! Minimum size is 2-stacked team."
+        super().__init__(self.message)
