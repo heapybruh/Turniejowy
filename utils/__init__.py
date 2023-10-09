@@ -1,8 +1,8 @@
-from .cogs import Cogs
-from .config import Config
-from .database import Team, Database
-from .exceptions import NoConfig, WrongConfig, NoAdmin, TooSmallTeam, TeamNotFound, UserNotInDatabase, DatabaseNotConnected, CommandLimitReached
-from .embed import Embed
+from .cogs import *
+from .config import *
+from .database import *
+from .embed import *
+from .exceptions import *
 
 db: Database | None = None
 cfg: Config | None = None

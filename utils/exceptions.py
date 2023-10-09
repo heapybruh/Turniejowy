@@ -37,3 +37,13 @@ class CommandLimitReached(Exception):
     def __init__(self):
         self.message = "This guild is limited to use this command once per second! Try again in 1s..."
         super().__init__(self.message)
+        
+class BotNotSetUp(Exception):
+    def __init__(self):
+        self.message = "Bot is not ready! Use **/settings setup** to set it up."
+        super().__init__(self.message)
+        
+class WrongRoleColor(Exception):
+    def __init__(self):
+        self.message = "Provided string is not a color in HEX."
+        super().__init__(self.message)
