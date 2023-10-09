@@ -8,13 +8,13 @@ class Config():
         
     def _read(self):
         if not os.path.exists("./config.json"):
-            raise NoConfigException()
+            raise NoConfig()
         
         file = open("./config.json", "r")
         config = json.loads(file.read())
         file.close()
         
         if not "token" in config:
-            raise WrongConfigException()
+            raise WrongConfig()
         
         return config["token"], config["bot_name"]
