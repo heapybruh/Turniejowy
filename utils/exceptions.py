@@ -10,7 +10,7 @@ class WrongConfig(Exception):
         
 class NoAdmin(Exception):
     def __init__(self):
-        self.message = "You don't have **__Administrator__** permission!"
+        self.message = "You don't have **__Administrator__** permission ."
         super().__init__(self.message)
         
 class TooSmallTeam(Exception):
@@ -20,15 +20,15 @@ class TooSmallTeam(Exception):
         
 class TeamNotFound(Exception):
     def __init__(self):
-        self.message = "Team not found!"
+        self.message = "Team not found."
         super().__init__(self.message)
         
 class UserNotInDatabase(Exception):
     def __init__(self):
-        self.message = "User not found in database!"
+        self.message = "User not found in database."
         super().__init__(self.message)
         
 class DatabaseNotConnected(Exception):
     def __init__(self):
-        self.message = "Couldn't connect to Database!"
+        self.message = "Couldn't connect to Database."
         super().__init__(self.message)
