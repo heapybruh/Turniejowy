@@ -1,4 +1,4 @@
-from utils.exceptions import *
+from utils import NoConfig, WrongConfig
 import json
 import os
 
