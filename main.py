@@ -1,4 +1,4 @@
-import tools
+import utils
 import discord
 from discord.ext import commands, tasks
 import os
@@ -17,7 +17,7 @@ if __name__ == "__main__":
                 intents = intents)
 
         async def setup_hook(self):
-            for file in tools.Cogs.get():
+            for file in utils.Cogs.get():
                 if file.is_dir():
                     continue
              
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         async def on_ready(self):
             await self.tree.sync()
             
-            tools.db = tools.Database(self)
+            utils.db = utils.Database(self)
 
             try:
                 self.rich_presence.start()
@@ -41,6 +41,6 @@ if __name__ == "__main__":
 
             print(f"[✓] Discord.py v{discord.__version__} → {self.user} ({self.user.id})")
 
-    config = tools.Config()
+    config = utils.Config()
     bot = Bot()
     bot.run(config.token, log_handler = None)

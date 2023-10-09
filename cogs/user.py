@@ -1,4 +1,4 @@
-import tools
+import utils
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -21,7 +21,7 @@ class user(commands.GroupCog, name = "user"):
         user: discord.Member
     ):
         try:
-            embed = tools.Embed.user(user, interaction.guild_id)
+            embed = utils.Embed.user(user, interaction.guild_id)
             await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)

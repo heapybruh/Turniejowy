@@ -1,5 +1,5 @@
-import tools
-from tools import Team, NoAdminException, TooSmallTeamException
+import utils
+from utils import Team, NoAdminException, TooSmallTeamException
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -40,11 +40,11 @@ class team(commands.GroupCog, name = "team"):
             if len(member_list) < 2:
                 raise TooSmallTeamException()
                 
-            team_id = tools.db.last_team_id() + 1
+            team_id = utils.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, member_list, team_name, member_1.id)
-            tools.db.add_team(team)
+            utils.db.add_team(team)
             
-            embed = tools.Embed.success(f"Successfully added team **{team_name}**!")
+            embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
             await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)
@@ -69,15 +69,15 @@ class team(commands.GroupCog, name = "team"):
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdminException()
                 
-            team = tools.db.get_team(team_id, interaction.guild_id)
+            team = utils.db.get_team(team_id, interaction.guild_id)
             
             if team == None:
                 await interaction.response.send_message("Team not found!", ephemeral = True)
                 return
                 
-            team_name = tools.db.remove_team(team_id)
+            team_name = utils.db.remove_team(team_id)
             
-            embed = tools.Embed.success(f"Successfully removed team **{team_name}**!")
+            embed = utils.Embed.success(f"Successfully removed team **{team_name}**!")
             await interaction.response.send_message(embed = embed)
         except Exception as error:
             await interaction.response.send_message(f"Error: {error}", ephemeral = True)

@@ -1,10 +1,10 @@
-import tools
+import utils
 import discord
 from datetime import datetime
 
 class Embed:
     def user(member: discord.Member, guild_id: int):
-        team = tools.db.get_member_team(member, guild_id)
+        team = utils.db.get_member_team(member, guild_id)
         
         if team == None:
             embed = discord.Embed(color = discord.Colour.from_rgb(255, 0, 0), title = "User not found in Database", timestamp = datetime.utcnow())
