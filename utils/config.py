@@ -4,7 +4,7 @@ import os
 
 class Config():
     def __init__(self):
-        self.token = self._read()
+        self.token, self.bot_name = self._read()
         
     def _read(self):
         if not os.path.exists("./config.json"):
@@ -17,4 +17,4 @@ class Config():
         if not "token" in config:
             raise WrongConfigException()
         
-        return config["token"]
+        return config["token"], config["bot_name"]
