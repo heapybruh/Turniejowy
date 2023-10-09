@@ -1,5 +1,5 @@
 import utils
-from utils import Team, NoAdminException, TooSmallTeamException, TeamNotFoundException
+from utils import Team, NoAdmin, TooSmallTeam, TeamNotFound
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -33,12 +33,12 @@ class team(commands.GroupCog, name = "team"):
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
-                raise NoAdminException()
+                raise NoAdmin()
             
             member_list = list(set([x for x in [member_1, member_2, member_3, member_4, member_5] if x is not None]))
 
             if len(member_list) < 2:
-                raise TooSmallTeamException()
+                raise TooSmallTeam()
                 
             team_id = utils.db.last_team_id() + 1
             team = Team(team_id, interaction.guild_id, member_list, team_name, member_1.id)
@@ -67,12 +67,12 @@ class team(commands.GroupCog, name = "team"):
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
-                raise NoAdminException()
+                raise NoAdmin()
                 
             team = utils.db.get_team(team_id, interaction.guild_id)
             
             if team == None:
-                raise TeamNotFoundException()
+                raise TeamNotFound()
                 
             team_name = utils.db.remove_team(team_id)
             
