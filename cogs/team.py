@@ -1,5 +1,5 @@
 import utils
-from utils import Team, NoAdmin, TooSmallTeam, TeamNotFound
+from utils import Team, NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -47,12 +47,14 @@ class team(commands.GroupCog, name = "team"):
             embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
             await interaction.response.send_message(embed = embed)
         except Exception as error:
-            await interaction.response.send_message(f"Error: {error}", ephemeral = True)
+            embed = utils.Embed.error(error.__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
 
     @add.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
+            embed = utils.Embed.error(CommandLimitReached().__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(team_id = "Enter team's id.")
@@ -79,12 +81,14 @@ class team(commands.GroupCog, name = "team"):
             embed = utils.Embed.success(f"Successfully removed team **{team_name}**!")
             await interaction.response.send_message(embed = embed)
         except Exception as error:
-            await interaction.response.send_message(f"Error: {error}", ephemeral = True)
+            embed = utils.Embed.error(error.__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
 
     @delete.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral = True)
+            embed = utils.Embed.error(CommandLimitReached().__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(team(bot))

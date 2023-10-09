@@ -32,3 +32,8 @@ class DatabaseNotConnected(Exception):
     def __init__(self):
         self.message = "Couldn't connect to Database."
         super().__init__(self.message)
+        
+class CommandLimitReached(Exception):
+    def __init__(self):
+        self.message = "This guild is limited to use this command once per second! Try again in 1s..."
+        super().__init__(self.message)

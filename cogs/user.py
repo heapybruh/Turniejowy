@@ -1,4 +1,5 @@
 import utils
+from utils import CommandLimitReached
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -24,12 +25,14 @@ class user(commands.GroupCog, name = "user"):
             embed = utils.Embed.user(user, interaction.guild_id)
             await interaction.response.send_message(embed = embed)
         except Exception as error:
-            await interaction.response.send_message(f"Error: {error}", ephemeral = True)
+            embed = utils.Embed.error(error.__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
 
     @check.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("This guild is limited to use this command once per second! Try again in 1s...", ephemeral=True)
+            embed = utils.Embed.error(CommandLimitReached().__str__())
+            await interaction.response.send_message(embed = embed, ephemeral = True)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(user(bot))
