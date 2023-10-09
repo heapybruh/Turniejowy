@@ -1,5 +1,5 @@
 import utils
-from utils import Team, NoAdminException, TooSmallTeamException
+from utils import Team, NoAdminException, TooSmallTeamException, TeamNotFoundException
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -72,8 +72,7 @@ class team(commands.GroupCog, name = "team"):
             team = utils.db.get_team(team_id, interaction.guild_id)
             
             if team == None:
-                await interaction.response.send_message("Team not found!", ephemeral = True)
-                return
+                raise TeamNotFoundException()
                 
             team_name = utils.db.remove_team(team_id)
             
