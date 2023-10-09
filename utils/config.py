@@ -17,4 +17,7 @@ class Config():
         if not "token" in config:
             raise WrongConfig()
         
+        if not "bot_name" in config:
+            config["bot_name"] = "Turniejowy"
+        
         return config["token"], config["bot_name"]
