@@ -36,6 +36,8 @@ class team(commands.GroupCog, name = "team"):
         member_4: discord.Member = None,
         member_5: discord.Member = None
     ):
+        await interaction.response.send_message(embed = utils.Embed.loading())
+        
         try:
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
@@ -51,8 +53,6 @@ class team(commands.GroupCog, name = "team"):
             
             if len(role_color) != 7:
                 raise WrongRoleColor()
-            
-            await interaction.response.send_message(embed = utils.Embed.loading(), ephemeral = True)
             
             color = ImageColor.getrgb(role_color)
 
@@ -96,18 +96,12 @@ class team(commands.GroupCog, name = "team"):
             teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
             team_embed = utils.Embed.team(team, color)
             await teams_channel.send(embed = team_embed)
-            
-            await asyncio.sleep(1)
-            
-            embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
-            await interaction.edit_original_response(embed = embed)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())
-            
-            try:
-                await interaction.response.send_message(embed = embed, ephemeral = True)
-            except discord.InteractionResponded:
-                await interaction.edit_original_response(embed = embed)
+            await interaction.edit_original_response(embed = embed)
+        else:
+            embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
+            await interaction.edit_original_response(embed = embed)
 
     @add.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
@@ -126,6 +120,8 @@ class team(commands.GroupCog, name = "team"):
         interaction: discord.Interaction,
         role: discord.Role
     ):
+        await interaction.response.send_message(embed = utils.Embed.loading())
+                
         try:
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
@@ -137,8 +133,6 @@ class team(commands.GroupCog, name = "team"):
             
             if team == None:
                 raise TeamNotFound()
-            
-            await interaction.response.send_message(embed = utils.Embed.loading(), ephemeral = True)
             
             role = discord.utils.get(interaction.guild.roles, id = team.role_id)
             if role != None:
@@ -159,16 +153,12 @@ class team(commands.GroupCog, name = "team"):
             await asyncio.sleep(1)
                 
             team_name = utils.db.remove_team(role.id, interaction.guild_id)
-            
-            embed = utils.Embed.success(f"Successfully removed team **{team_name}**!")
-            await interaction.edit_original_response(embed = embed)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())
-            
-            try:
-                await interaction.response.send_message(embed = embed, ephemeral = True)
-            except discord.InteractionResponded:
-                await interaction.edit_original_response(embed = embed)
+            await interaction.edit_original_response(embed = embed)
+        else:
+            embed = utils.Embed.success(f"Successfully removed team **{team_name}**!")
+            await interaction.edit_original_response(embed = embed)
 
     @delete.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
