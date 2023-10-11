@@ -55,6 +55,7 @@ class team(commands.GroupCog, name = "team"):
                 raise WrongRoleColor()
             
             await interaction.response.send_message(embed = utils.Embed.loading(), ephemeral = True)
+            message = await interaction.original_response()
             
             color = ImageColor.getrgb(role_color)
 
@@ -104,7 +105,6 @@ class team(commands.GroupCog, name = "team"):
             embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
             await interaction.edit_original_response(embed = embed)
         except Exception as error:
-            print(error.__str__())
             embed = utils.Embed.error(error.__str__())
             await interaction.edit_original_response(embed = embed) if message else await interaction.response.send_message(embed = embed, ephemeral = True)
 
@@ -125,6 +125,8 @@ class team(commands.GroupCog, name = "team"):
         interaction: discord.Interaction,
         team_id: int
     ):
+        message: discord.Message | None = None
+        
         try:
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
@@ -136,6 +138,9 @@ class team(commands.GroupCog, name = "team"):
             
             if team == None:
                 raise TeamNotFound()
+            
+            await interaction.response.send_message(embed = utils.Embed.loading(), ephemeral = True)
+            message = await interaction.original_response()
             
             role = discord.utils.get(interaction.guild.roles, id = team.role_id)
             await role.delete()
@@ -158,7 +163,7 @@ class team(commands.GroupCog, name = "team"):
             await interaction.response.send_message(embed = embed)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())
-            await interaction.response.send_message(embed = embed, ephemeral = True)
+            await interaction.edit_original_response(embed = embed) if message else await interaction.response.send_message(embed = embed, ephemeral = True)
 
     @delete.error
     async def on_cooldown_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
