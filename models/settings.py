@@ -1,5 +1,6 @@
 class Settings():
-    def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int):
+    def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int, teams_channel_id: int):
         self.guild_id = guild_id
         self.text_category_id = text_category_id
         self.voice_category_id = voice_category_id
+        self.teams_channel_id = teams_channel_id

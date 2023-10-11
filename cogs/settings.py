@@ -50,17 +50,18 @@ class settings(commands.GroupCog, name = "settings"):
         self,
         interaction: discord.Interaction,
         text_category: discord.CategoryChannel,
-        voice_category: discord.CategoryChannel
+        voice_category: discord.CategoryChannel,
+        teams_channel: discord.TextChannel
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
             
             if utils.db.get_settings(interaction.guild_id) == None:
-                utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id))                
+                utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id))                
                 embed = utils.Embed.success("Successfully created settings.")
             else:
-                utils.db.update_settings(Settings(interaction.guild_id, text_category.id, voice_category.id))
+                utils.db.update_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id))
                 embed = utils.Embed.success("Successfully updated settings.")
                 
             await interaction.response.send_message(embed = embed)

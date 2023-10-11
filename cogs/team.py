@@ -5,6 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from PIL import ImageColor
+import asyncio
 
 class team(commands.GroupCog, name = "team"):
     def __init__(self, bot: commands.Bot) -> None:
@@ -73,19 +74,37 @@ class team(commands.GroupCog, name = "team"):
             voice_category = discord.utils.get(interaction.guild.categories, id = settings.voice_category_id)
 
             text_channel = await text_category.create_text_channel(team_name)
+            
+            await asyncio.sleep(1)
+            
             await text_channel.set_permissions(interaction.guild.default_role, overwrite = permissions_everyone)
             await text_channel.set_permissions(role, overwrite = permissions_team)
+            
+            await asyncio.sleep(1)
+            
             voice_channel = await voice_category.create_voice_channel(team_name)
+            
+            await asyncio.sleep(1)
+            
             await voice_channel.set_permissions(interaction.guild.default_role, overwrite = permissions_everyone)
             await voice_channel.set_permissions(role, overwrite = permissions_team)
-
+            
+            await asyncio.sleep(1)
+            
             team_id = utils.db.last_team_id() + 1
             team = Team(team_id, role.id, interaction.guild_id, member_list, team_name, member_1.id)
-            utils.db.add_team(team)
+            utils.db.add_team(team)            
+            
+            teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
+            team_embed = utils.Embed.team(team, color)
+            await teams_channel.send(embed = team_embed)
+            
+            await asyncio.sleep(1)
             
             embed = utils.Embed.success(f"Successfully added team **{team_name}**!")
             await interaction.edit_original_response(embed = embed)
         except Exception as error:
+            print(error.__str__())
             embed = utils.Embed.error(error.__str__())
             await interaction.edit_original_response(embed = embed) if message else await interaction.response.send_message(embed = embed, ephemeral = True)
 
