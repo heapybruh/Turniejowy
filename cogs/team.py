@@ -116,7 +116,7 @@ class team(commands.GroupCog, name = "team"):
             await interaction.response.send_message(embed = embed, ephemeral = True)
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
-    @app_commands.describe(team_id = "Enter team's id.")
+    @app_commands.describe(role = "Select team's role.")
     @app_commands.command(
         name = "delete", 
         description = "Deletes a team from Database"
@@ -124,7 +124,7 @@ class team(commands.GroupCog, name = "team"):
     async def delete(
         self,
         interaction: discord.Interaction,
-        team_id: int
+        role: discord.Role
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
@@ -133,7 +133,7 @@ class team(commands.GroupCog, name = "team"):
             if not utils.db.get_settings(interaction.guild_id):
                 raise BotNotSetUp()
                 
-            team = utils.db.get_team(team_id, interaction.guild_id)
+            team = utils.db.get_team(role.id, interaction.guild_id)
             
             if team == None:
                 raise TeamNotFound()
@@ -141,21 +141,24 @@ class team(commands.GroupCog, name = "team"):
             await interaction.response.send_message(embed = utils.Embed.loading(), ephemeral = True)
             
             role = discord.utils.get(interaction.guild.roles, id = team.role_id)
-            await role.delete()
+            if role != None:
+                await role.delete()
             
             await asyncio.sleep(1)
             
             text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
-            await text_channel.delete()
+            if text_channel != None:
+                await text_channel.delete()
             
             await asyncio.sleep(1)
             
             voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel_id)
-            await voice_channel.delete()
+            if voice_channel != None:
+                await voice_channel.delete()
             
             await asyncio.sleep(1)
                 
-            team_name = utils.db.remove_team(team_id)
+            team_name = utils.db.remove_team(role.id, interaction.guild_id)
             
             embed = utils.Embed.success(f"Successfully removed team **{team_name}**!")
             await interaction.edit_original_response(embed = embed)

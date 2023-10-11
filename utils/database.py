@@ -25,9 +25,10 @@ class Database():
             self.cursor.execute("INSERT OR IGNORE INTO members VALUES(?, ?, ?)", (member.id, team.guild_id, team.id))
         self.database.commit()
         
-    def remove_team(self, team_id: int) -> str:
-        self.cursor.execute("SELECT * FROM teams WHERE id = ?", (team_id, ))
+    def remove_team(self, role_id: int, guild_id: int) -> str:
+        self.cursor.execute("SELECT * FROM teams WHERE role_id = ? AND guild_id = ?", (role_id, guild_id))
         team = self.cursor.fetchall()
+        team_id = team[0][0]
         team_name = team[0][3]
         
         self.cursor.execute("DELETE FROM teams WHERE id = ?", (team_id, ))
@@ -36,15 +37,14 @@ class Database():
         
         return team_name
     
-    def get_team(self, team_id: int, guild_id: int) -> Team | None:
-        self.cursor.execute("SELECT * FROM teams WHERE id = ? AND guild_id = ?", (team_id, guild_id))
+    def get_team(self, role_id: int, guild_id: int) -> Team | None:
+        self.cursor.execute("SELECT * FROM teams WHERE role_id = ? AND guild_id = ?", (role_id, guild_id))
         team = self.cursor.fetchall()
         
         if len(team) == 0:
             return None
         
-        team_role_id = team[0][1]
-        guild_id = team[0][2]
+        team_id = team[0][0]
         team_name = team[0][3]
         team_owner_id = team[0][4]
         text_channel_id = team[0][5]
@@ -54,7 +54,7 @@ class Database():
         members = self.cursor.fetchall()
         guild = self.bot.get_guild(guild_id)
         
-        team = Team(team_id, team_role_id, guild_id, [guild.get_member(x[0]) for x in members], team_name, team_owner_id, text_channel_id, voice_channel_id)
+        team = Team(team_id, role_id, guild_id, [guild.get_member(x[0]) for x in members], team_name, team_owner_id, text_channel_id, voice_channel_id)
         
         return team
     
