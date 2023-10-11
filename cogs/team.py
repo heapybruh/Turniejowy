@@ -92,8 +92,8 @@ class team(commands.GroupCog, name = "team"):
             await asyncio.sleep(1)
             
             team_id = utils.db.last_team_id() + 1
-            team = Team(team_id, role.id, interaction.guild_id, member_list, team_name, member_1.id)
-            utils.db.add_team(team)            
+            team = Team(team_id, role.id, interaction.guild_id, member_list, team_name, member_1.id, text_channel.id, voice_channel.id)
+            utils.db.add_team(team)
             
             teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
             team_embed = utils.Embed.team(team, color)
@@ -136,6 +136,21 @@ class team(commands.GroupCog, name = "team"):
             
             if team == None:
                 raise TeamNotFound()
+            
+            role = discord.utils.get(interaction.guild.roles, id = team.role_id)
+            await role.delete()
+            
+            await asyncio.sleep(1)
+            
+            text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
+            await text_channel.delete()
+            
+            await asyncio.sleep(1)
+            
+            voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel_id)
+            await voice_channel.delete()
+            
+            await asyncio.sleep(1)
                 
             team_name = utils.db.remove_team(team_id)
             
