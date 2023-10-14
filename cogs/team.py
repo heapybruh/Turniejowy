@@ -98,7 +98,7 @@ class team(commands.GroupCog, name = "team"):
             utils.db.add_team(team)
             
             teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
-            team_embed = utils.Embed.team(team, color)
+            team_embed = utils.Embed.team_added(team, color)
             await teams_channel.send(embed = team_embed)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())

@@ -46,13 +46,18 @@ class Embed:
         
         return embed
     
-    def team(team: Team, color: tuple):
+    def team_added(team: Team, color: tuple):
+        member_list = []
+        for x in team.members:
+            if x.id != team.owner_id:
+                member_list.append(f"<@{x.id}>")
+                
         embed = discord.Embed(color = discord.Colour.from_rgb(color[0], color[1], color[2]), title = "A team has been added!", timestamp = datetime.utcnow())
         embed.add_field(name = "Team's Name", value = team.name, inline = False)
         embed.add_field(name = "Team's Role", value = f"<@&{team.role_id}>", inline = False)
         embed.add_field(name = "Team's ID", value = team.id, inline = False)
         embed.add_field(name = "Team's Owner", value = f"<@{team.owner_id}>", inline = False)
-        embed.add_field(name = "Other Team Members", value = "\n".join([f"<@{x.id}>" if x.id != team.owner_id else "" for x in team.members]), inline = False)
+        embed.add_field(name = "Other Team Members", value = "\n".join(member_list), inline = False)
         embed.set_footer(text = f"{utils.cfg.bot_name} by heapy")
         
         return embed
