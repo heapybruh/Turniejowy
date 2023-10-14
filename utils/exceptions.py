@@ -47,3 +47,8 @@ class WrongRoleColor(Exception):
     def __init__(self):
         self.message = "Provided string is not a color in HEX."
         super().__init__(self.message)
+        
+class RoleNotFound(Exception):
+    def __init__(self):
+        self.message = "Team's role doesn't exist."
+        super().__init__(self.message)

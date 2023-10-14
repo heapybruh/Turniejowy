@@ -141,20 +141,17 @@ class team(commands.GroupCog, name = "team"):
             role = discord.utils.get(interaction.guild.roles, id = team.role_id)
             if role != None:
                 await role.delete()
-            
-            await asyncio.sleep(1)
+                await asyncio.sleep(1)
             
             text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
             if text_channel != None:
                 await text_channel.delete()
-            
-            await asyncio.sleep(1)
+                await asyncio.sleep(1)
             
             voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel_id)
             if voice_channel != None:
                 await voice_channel.delete()
-            
-            await asyncio.sleep(1)
+                await asyncio.sleep(1)
                 
             team_name = utils.db.remove_team(role.id, interaction.guild_id)
         except Exception as error:

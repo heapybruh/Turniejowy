@@ -1,5 +1,5 @@
 import utils
-from utils.exceptions import DatabaseNotConnected, UserNotInDatabase, BotNotSetUp
+from utils.exceptions import DatabaseNotConnected, UserNotInDatabase, BotNotSetUp, RoleNotFound
 from models import Team
 import discord
 from datetime import datetime
@@ -10,9 +10,12 @@ class Embed:
             return Embed.error(DatabaseNotConnected().__str__())
             
         team = utils.db.get_member_team(member, guild_id)
-        
         if team == None:
             return Embed.error(UserNotInDatabase().__str__())
+        
+        role = discord.utils.get(member.roles, id = team.role_id)
+        if role == None:
+            return Embed.error(RoleNotFound().__str__())
         
         member_list = []
         for x in team.members:
