@@ -106,3 +106,11 @@ class Database():
         teams_channel_id = settings[0][3]
         
         return Settings(guild_id, text_category_id, voice_category_id, teams_channel_id)
+    
+    def add_to_team(self, member: Member, team: Team):
+        self.cursor.execute("INSERT OR IGNORE INTO members VALUES(?, ?, ?)", (member.id, team.guild_id, team.id))
+        self.database.commit()
+    
+    def remove_from_team(self, member: Member, team: Team):
+        self.cursor.execute("DELETE FROM members WHERE discord_id = ? AND guild_id = ? AND team_id = ?", (member.id, team.guild_id, team.id))
+        self.database.commit()

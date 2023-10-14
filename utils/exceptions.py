@@ -52,3 +52,23 @@ class RoleNotFound(Exception):
     def __init__(self):
         self.message = "Team's role doesn't exist."
         super().__init__(self.message)
+        
+class UserAlreadyInTeam(Exception):
+    def __init__(self):
+        self.message = "User is already in a team."
+        super().__init__(self.message)
+        
+class UserNotInSpecifiedTeam(Exception):
+    def __init__(self):
+        self.message = "User not found in specified team."
+        super().__init__(self.message)
+        
+class UserIsTeamOwner(Exception):
+    def __init__(self):
+        self.message = "User is an owner of that team."
+        super().__init__(self.message)
+    
+class TeamUnderstaffed(Exception):
+    def __init__(self):
+        self.message = "Teams can only be 2-stacked and above."
+        super().__init__(self.message)
