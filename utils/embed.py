@@ -13,6 +13,11 @@ class Embed:
         
         if team == None:
             return Embed.error(UserNotInDatabase().__str__())
+        
+        member_list = []
+        for x in team.members:
+            if x.id != team.owner_id:
+                member_list.append(f"<@{x.id}>")
             
         embed = discord.Embed(color = discord.Colour.from_rgb(255, 255, 255), timestamp = datetime.utcnow())
         embed.set_author(name = member.name, icon_url = member.avatar.url)
@@ -20,7 +25,7 @@ class Embed:
         embed.add_field(name = "Team's Role", value = f"<@&{team.role_id}>", inline = False)
         embed.add_field(name = "Team's ID", value = team.id, inline = False)
         embed.add_field(name = "Team's Owner", value = f"<@{team.owner_id}>", inline = False)
-        embed.add_field(name = "Other Team Members", value = "\n".join([f"<@{x.id}>" if x.id != team.owner_id else "" for x in team.members]), inline = False)
+        embed.add_field(name = "Other Team Members", value = "\n".join(member_list), inline = False)
         embed.set_footer(text = f"{utils.cfg.bot_name} by heapy")
         
         return embed
