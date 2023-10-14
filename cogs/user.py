@@ -54,11 +54,11 @@ class user(commands.GroupCog, name = "user"):
                 raise NoAdmin()
             
             team = utils.db.get_team(team_role.id, interaction.guild_id)
-            if team == None:
+            if not team:
                 raise TeamNotFound()
             
             member_team = utils.db.get_member_team(user, interaction.guild_id)
-            if member_team != None:
+            if not member_team:
                 raise UserAlreadyInTeam()
             
             await user.add_roles(team_role)
@@ -96,7 +96,7 @@ class user(commands.GroupCog, name = "user"):
                 raise NoAdmin()
             
             team = utils.db.get_team(team_role.id, interaction.guild_id)
-            if team == None:
+            if not team:
                 raise TeamNotFound()
             
             if team.owner_id == user.id:
@@ -106,7 +106,7 @@ class user(commands.GroupCog, name = "user"):
                 raise TeamUnderstaffed()
             
             member_team = utils.db.get_member_team(user, interaction.guild_id)
-            if member_team == None:
+            if not member_team:
                 raise UserNotInDatabase()
             
             if team.id != member_team.id:

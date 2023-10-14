@@ -22,7 +22,8 @@ class settings(commands.GroupCog, name = "settings"):
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
             
-            if utils.db.get_settings(interaction.guild_id) == None:
+            settings = utils.db.get_settings(interaction.guild_id)
+            if not settings:
                 raise BotNotSetUp()
             
             embed = utils.Embed.settings(interaction.guild_id)
@@ -57,7 +58,8 @@ class settings(commands.GroupCog, name = "settings"):
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
             
-            if utils.db.get_settings(interaction.guild_id) == None:
+            settings = utils.db.get_settings(interaction.guild_id)
+            if not settings:
                 utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id))                
                 embed = utils.Embed.success("Successfully created settings.")
             else:
@@ -74,7 +76,6 @@ class settings(commands.GroupCog, name = "settings"):
         if isinstance(error, app_commands.CommandOnCooldown):
             embed = utils.Embed.error(CommandLimitReached().__str__())
             await interaction.response.send_message(embed = embed, ephemeral = True)
-
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(settings(bot))

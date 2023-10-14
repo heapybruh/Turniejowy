@@ -59,8 +59,9 @@ class team(commands.GroupCog, name = "team"):
                 raise WrongRoleColor()
             
             color = ImageColor.getrgb(role_color)
+            role_color = discord.Colour.from_rgb(color[0], color[1], color[2])
 
-            role = await interaction.guild.create_role(name = team_name, permissions = discord.Permissions.none(), colour = discord.Color.from_rgb(color[0], color[1], color[2]), hoist = True, display_icon = None, mentionable = False)
+            role = await interaction.guild.create_role(name = team_name, permissions = discord.Permissions.none(), colour = role_color, hoist = True, display_icon = None, mentionable = False)
 
             for member in member_list:
                 await member.add_roles(role)
@@ -95,11 +96,13 @@ class team(commands.GroupCog, name = "team"):
             
             team_id = utils.db.last_team_id() + 1
             team = Team(team_id, role.id, interaction.guild_id, member_list, team_name, member_1.id, text_channel.id, voice_channel.id)
-            utils.db.add_team(team)
             
             teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
-            team_embed = utils.Embed.team_added(team, color)
-            await teams_channel.send(embed = team_embed)
+            team_embed = utils.Embed.team(team, role_color)
+            message = await teams_channel.send(embed = team_embed)
+            team.message_id = message.id
+            
+            utils.db.add_team(team)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())
             await interaction.edit_original_response(embed = embed)
@@ -130,28 +133,39 @@ class team(commands.GroupCog, name = "team"):
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
             
-            if not utils.db.get_settings(interaction.guild_id):
+            settings = utils.db.get_settings(interaction.guild_id)
+            if not settings:
                 raise BotNotSetUp()
                 
             team = utils.db.get_team(role.id, interaction.guild_id)
             
-            if team == None:
+            if not team:
                 raise TeamNotFound()
             
             role = discord.utils.get(interaction.guild.roles, id = team.role_id)
-            if role != None:
+            if role:
                 await role.delete()
                 await asyncio.sleep(1)
             
             text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
-            if text_channel != None:
+            if text_channel:
                 await text_channel.delete()
                 await asyncio.sleep(1)
             
             voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel_id)
-            if voice_channel != None:
+            if voice_channel:
                 await voice_channel.delete()
                 await asyncio.sleep(1)
+            
+            teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
+            if teams_channel:
+                try:
+                    message = await teams_channel.fetch_message(team.message_id)
+                    await message.delete()
+                except:
+                    pass
+                else:
+                    await asyncio.sleep(1)
                 
             team_name = utils.db.remove_team(role.id, interaction.guild_id)
         except Exception as error:
