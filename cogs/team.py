@@ -19,11 +19,13 @@ class team(commands.GroupCog, name = "team"):
         member_2 = "Select user.",
         member_3 = "Select user.",
         member_4 = "Select user.",
-        member_5 = "Select user."
+        member_5 = "Select user.",
+        reserve_member_1 = "Select user.",
+        reserve_member_2 = "Select user."
     )
     @app_commands.command(
         name = "add", 
-        description = "Adds a team (max 5-stacked, minimum 2-stacked) to Database"
+        description = "Adds a team (maximum 5-stacked/minimum 2-stacked + 2 reserved) to Database"
     )
     async def add(
         self,
@@ -34,7 +36,9 @@ class team(commands.GroupCog, name = "team"):
         member_2: discord.Member,
         member_3: discord.Member = None,
         member_4: discord.Member = None,
-        member_5: discord.Member = None
+        member_5: discord.Member = None,
+        reserve_member_1: discord.Member = None,
+        reserve_member_2: discord.Member = None
     ):
         await interaction.response.send_message(embed = utils.Embed.loading())
         
@@ -46,7 +50,7 @@ class team(commands.GroupCog, name = "team"):
             if not settings:
                 raise BotNotSetUp()
 
-            member_list = list(set([x for x in [member_1, member_2, member_3, member_4, member_5] if x is not None]))
+            member_list = list(set([x for x in [member_1, member_2, member_3, member_4, member_5, reserve_member_1, reserve_member_2] if x is not None]))
 
             if len(member_list) < 2:
                 raise TooSmallTeam()
