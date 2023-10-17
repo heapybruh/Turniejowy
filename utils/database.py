@@ -19,6 +19,10 @@ class Database():
         
         print("[✓] Connected to database")
         
+    def update_team(self, team: Team):
+        self.cursor.execute("UPDATE teams SET name = ?, text_channel_id = ?, voice_channel_id = ?, message_id = ? WHERE id = ?", (team.name, team.text_channel_id, team.voice_channel_id, team.message_id, team.id))
+        self.database.commit()
+        
     def add_team(self, team: Team):
         self.cursor.execute("INSERT OR IGNORE INTO teams VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (team.id, team.role_id, team.guild_id, team.name, team.owner_id, team.text_channel_id, team.voice_channel_id, team.message_id))
         for member in team.members:
@@ -36,6 +40,11 @@ class Database():
         self.database.commit()
         
         return team_name
+    
+    def remove_guild_teams(self, guild_id: int):
+        self.cursor.execute("DELETE FROM teams WHERE guild_id = ?", (guild_id, ))
+        self.cursor.execute("DELETE FROM members WHERE guild_id = ?", (guild_id, ))
+        self.database.commit()
 
     def get_team(self, role_id: int, guild_id: int) -> Team | None:
         self.cursor.execute("SELECT * FROM teams WHERE role_id = ? AND guild_id = ?", (role_id, guild_id))

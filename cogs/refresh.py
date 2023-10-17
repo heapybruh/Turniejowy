@@ -22,22 +22,27 @@ class refresh(commands.Cog):
                 
                 guild = discord.utils.get(self.bot.guilds, id = team.guild_id)
                 if not guild:
-                    continue
+                    utils.db.remove_guild_teams(team.guild_id)
                 
-                channel = discord.utils.get(guild.channels, id = settings.teams_channel_id)
-                if not channel:
+                teams_channel = discord.utils.get(guild.channels, id = settings.teams_channel_id)
+                if not teams_channel:
                     continue
             
                 role = discord.utils.get(guild.roles, id = team.role_id)
                 if not role:
-                    continue
+                    utils.db.remove_team(team.role_id, team.guild_id)
                 
-                message = await channel.fetch_message(team.message_id)
-                if not message:
-                    continue
-                
+                team.name = role.name
+                message = await teams_channel.fetch_message(team.message_id)
                 embed = utils.Embed.team(team, role.color)
-                await message.edit(embed = embed)
+                
+                if not message:
+                    team_message = await teams_channel.send(embed = embed)
+                    team.message_id = team_message.id
+                else:
+                    await message.edit(embed = embed)
+                    
+                utils.db.update_team(team)
         except Exception as error:
             print(f"An error has occurred while refreshing teams: {error.__str__()}")
 
