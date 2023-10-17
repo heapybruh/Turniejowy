@@ -1,6 +1,6 @@
 import utils
-from utils.exceptions import DatabaseNotConnected, UserNotInDatabase, BotNotSetUp, RoleNotFound
-from models import Team
+from .exceptions import DatabaseNotConnected, UserNotInDatabase, BotNotSetUp, RoleNotFound
+from .models import Team
 import discord
 from datetime import datetime
 
@@ -22,7 +22,7 @@ class Embed:
             if x.id != team.owner_id:
                 member_list.append(f"<@{x.id}>")
             
-        embed = discord.Embed(color = discord.Colour.from_rgb(255, 255, 255), timestamp = datetime.utcnow())
+        embed = discord.Embed(color = role.color, timestamp = datetime.utcnow())
         embed.set_author(name = member.name, icon_url = member.avatar.url)
         embed.add_field(name = "Team's Name", value = team.name, inline = False)
         embed.add_field(name = "Team's Role", value = f"<@&{team.role_id}>", inline = False)
@@ -39,8 +39,8 @@ class Embed:
             return Embed.error(BotNotSetUp().__str__())
         
         embed = discord.Embed(color = discord.Colour.from_rgb(255, 255, 255), title = "Settings", timestamp = datetime.utcnow())
-        embed.add_field(name = "Teams' Text Channels", value = f"<#{settings.text_category_id}", inline = False)
-        embed.add_field(name = "Teams' Voice Channels", value = f"<#{settings.voice_category_id}", inline = False)
+        embed.add_field(name = "Teams' Text Channels", value = f"<#{settings.text_category_id}>", inline = False)
+        embed.add_field(name = "Teams' Voice Channels", value = f"<#{settings.voice_category_id}>", inline = False)
         embed.set_footer(text = f"{utils.cfg.bot_name} by heapy")
         
         return embed

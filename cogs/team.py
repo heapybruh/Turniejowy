@@ -1,6 +1,5 @@
 import utils
-from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor
-from models import Team
+from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor, Team
 import discord
 from discord import app_commands
 from discord.ext import commands

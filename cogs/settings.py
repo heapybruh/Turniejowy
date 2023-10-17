@@ -1,6 +1,5 @@
 import utils
-from utils import CommandLimitReached, NoAdmin, BotNotSetUp
-from models import Settings
+from utils import CommandLimitReached, NoAdmin, BotNotSetUp, Settings
 import discord
 from discord import app_commands
 from discord.ext import commands

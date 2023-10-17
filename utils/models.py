@@ -1,4 +1,11 @@
-from discord import Member, Message
+from discord import Member
+
+class Settings():
+    def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int, teams_channel_id: int):
+        self.guild_id = guild_id
+        self.text_category_id = text_category_id
+        self.voice_category_id = voice_category_id
+        self.teams_channel_id = teams_channel_id
 
 class Team():
     def __init__(self, id: int, role_id: int, guild_id: int, members: list[Member], name: str, owner_id: int, text_channel_id: int, voice_channel_id: int, message_id: int = 0):

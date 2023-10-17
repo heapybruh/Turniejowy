@@ -1,4 +1,4 @@
-from models import Team, Settings
+from .models import Team, Settings
 import sqlite3
 from discord import Member
 from discord.ext import commands
