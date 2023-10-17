@@ -58,7 +58,7 @@ class user(commands.GroupCog, name = "user"):
                 raise TeamNotFound()
             
             member_team = utils.db.get_member_team(user, interaction.guild_id)
-            if not member_team:
+            if member_team:
                 raise UserAlreadyInTeam()
             
             await user.add_roles(team_role)

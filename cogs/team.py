@@ -1,5 +1,5 @@
 import utils
-from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor, Team
+from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor, Team, UserAlreadyInTeam
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -56,6 +56,11 @@ class team(commands.GroupCog, name = "team"):
             
             if len(role_color) != 7:
                 raise WrongRoleColor()
+            
+            for x in member_list:
+                member_team = utils.db.get_member_team(x, interaction.guild_id)
+                if member_team:
+                    raise UserAlreadyInTeam()
             
             color = ImageColor.getrgb(role_color)
             role_color = discord.Colour.from_rgb(color[0], color[1], color[2])
