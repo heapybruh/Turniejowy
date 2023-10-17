@@ -15,7 +15,7 @@
 ## How to use?
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications/)
 2. Create a Bot
-3. Rename [an example config file](./config.json.example) to **config.json**
+3. Rename [an example config file](./config.json.example) to `config.json`
 4. Copy your bot's token and paste it into your config file
 5. Install Python modules by using `pip install -r requirements.txt`
-6. Start **main.py** by using `python main.py`
+6. Start the script by using `python main.py`
