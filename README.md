@@ -17,5 +17,5 @@
 2. Create a Bot
 3. Rename [an example config file](./config.json.example) to `config.json`
 4. Copy your bot's token and paste it into your config file
-5. Install Python modules by using `pip install -r requirements.txt`
+5. Install Python modules with `pip install -r requirements.txt`
 6. Start the script by using `python main.py`
