@@ -14,7 +14,7 @@ class Database():
         
         self.cursor.execute("CREATE TABLE IF NOT EXISTS teams(id INTEGER, role_id INTEGER, guild_id INTEGER, name TEXT, owner_id INTEGER, text_channel_id INTEGER, voice_channel_id INTEGER, message_id INTEGER, UNIQUE(id))")
         self.cursor.execute("CREATE TABLE IF NOT EXISTS members(discord_id INTEGER, guild_id INTEGER, team_id INTEGER, UNIQUE(discord_id, guild_id))")
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS settings(guild_id INTEGER, text_category_id, voice_category_id, teams_channel_id, UNIQUE(guild_id))")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS settings(guild_id INTEGER, text_category_id INTEGER, voice_category_id INTEGER, teams_channel_id INTEGER, team_owner_role_id INTEGER, UNIQUE(guild_id))")
         self.database.commit()
         
         print("[✓] Connected to database")
@@ -122,11 +122,11 @@ class Database():
         return teams[0]
 
     def add_settings(self, settings: Settings):
-        self.cursor.execute("INSERT OR IGNORE INTO settings VALUES(?, ?, ?, ?)", (settings.guild_id, settings.text_category_id, settings.voice_category_id, settings.teams_channel_id))
+        self.cursor.execute("INSERT OR IGNORE INTO settings VALUES(?, ?, ?, ?, ?)", (settings.guild_id, settings.text_category_id, settings.voice_category_id, settings.teams_channel_id, settings.team_owner_role_id))
         self.database.commit()
         
     def update_settings(self, settings: Settings):
-        self.cursor.execute("UPDATE settings SET text_category_id = ?, voice_category_id = ?, teams_channel_id = ? WHERE guild_id = ?", (settings.text_category_id, settings.voice_category_id, settings.teams_channel_id, settings.guild_id))
+        self.cursor.execute("UPDATE settings SET text_category_id = ?, voice_category_id = ?, teams_channel_id = ?, team_owner_role_id = ? WHERE guild_id = ?", (settings.text_category_id, settings.voice_category_id, settings.teams_channel_id, settings.team_owner_role_id, settings.guild_id))
         self.database.commit()
         
     def get_settings(self, guild_id: int) -> Settings:
@@ -139,8 +139,9 @@ class Database():
         text_category_id = settings[0][1]
         voice_category_id = settings[0][2]
         teams_channel_id = settings[0][3]
+        team_owner_role_id = settings[0][4]
         
-        return Settings(guild_id, text_category_id, voice_category_id, teams_channel_id)
+        return Settings(guild_id, text_category_id, voice_category_id, teams_channel_id, team_owner_role_id)
     
     def add_to_team(self, member: Member, team: Team):
         self.cursor.execute("INSERT OR IGNORE INTO members VALUES(?, ?, ?)", (member.id, team.guild_id, team.id))

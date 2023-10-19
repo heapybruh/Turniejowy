@@ -39,8 +39,10 @@ class settings(commands.GroupCog, name = "settings"):
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(
-        text_category = "Select category for teams' text channels.",
-        voice_category = "Select category for teams' voice channels."
+        text_category = "Select category for text channels.",
+        voice_category = "Select category for voice channels.",
+        teams_channel = "Select channel in which teams will be listed.",
+        team_owner_role = "Select role that is given only to team owners."
     )
     @app_commands.command(
         name = "setup", 
@@ -51,7 +53,8 @@ class settings(commands.GroupCog, name = "settings"):
         interaction: discord.Interaction,
         text_category: discord.CategoryChannel,
         voice_category: discord.CategoryChannel,
-        teams_channel: discord.TextChannel
+        teams_channel: discord.TextChannel,
+        team_owner_role: discord.Role = None
     ):
         try:
             if not interaction.user.guild_permissions.administrator:
@@ -59,10 +62,10 @@ class settings(commands.GroupCog, name = "settings"):
             
             settings = utils.db.get_settings(interaction.guild_id)
             if not settings:
-                utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id))                
+                utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id, team_owner_role.id if team_owner_role != None else 0))                
                 embed = utils.Embed.success("Successfully created settings.")
             else:
-                utils.db.update_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id))
+                utils.db.update_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id, team_owner_role.id if team_owner_role != None else 0))
                 embed = utils.Embed.success("Successfully updated settings.")
                 
             await interaction.response.send_message(embed = embed)

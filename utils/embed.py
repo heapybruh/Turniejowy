@@ -39,8 +39,10 @@ class Embed:
             return Embed.error(BotNotSetUp().__str__())
         
         embed = discord.Embed(color = discord.Colour.from_rgb(255, 255, 255), title = "Settings", timestamp = datetime.utcnow())
-        embed.add_field(name = "Teams' Text Channels", value = f"<#{settings.text_category_id}>", inline = False)
-        embed.add_field(name = "Teams' Voice Channels", value = f"<#{settings.voice_category_id}>", inline = False)
+        embed.add_field(name = "Text Channels", value = f"<#{settings.text_category_id}>", inline = False)
+        embed.add_field(name = "Voice Channels", value = f"<#{settings.voice_category_id}>", inline = False)
+        if settings.team_owner_role_id != 0:
+            embed.add_field(name = "Role for Team Owners", value = f"<@&{settings.team_owner_role_id}>", inline = False)
         embed.set_footer(text = f"{utils.cfg.bot_name} by heapy")
         
         return embed

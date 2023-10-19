@@ -12,15 +12,15 @@ class team(commands.GroupCog, name = "team"):
 
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(
-        role_color = "Enter role's color in HEX. (example: #ffffff)",
-        team_name = "Enter team's name.",
-        member_1 = "Select user.",
-        member_2 = "Select user.",
-        member_3 = "Select user.",
-        member_4 = "Select user.",
-        member_5 = "Select user.",
-        reserve_member_1 = "Select user.",
-        reserve_member_2 = "Select user."
+        role_color = "Enter color in HEX. (example: #ffffff)",
+        team_name = "Enter team name.",
+        member_1 = "Select team owner.",
+        member_2 = "Select team member.",
+        member_3 = "Select team member.",
+        member_4 = "Select team member.",
+        member_5 = "Select team member.",
+        reserve_member_1 = "Select team reserve member.",
+        reserve_member_2 = "Select team reserve member."
     )
     @app_commands.command(
         name = "add", 
@@ -56,6 +56,13 @@ class team(commands.GroupCog, name = "team"):
             
             if len(role_color) != 7:
                 raise WrongRoleColor()
+            
+            if settings.team_owner_role_id != 0:
+                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role_id)
+                if not owner_role:
+                    raise BotNotSetUp()
+            
+                await member_1.add_roles(owner_role)
             
             for x in member_list:
                 member_team = utils.db.get_member_team(x, interaction.guild_id)
@@ -121,7 +128,7 @@ class team(commands.GroupCog, name = "team"):
             await interaction.response.send_message(embed = embed, ephemeral = True)
             
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
-    @app_commands.describe(role = "Select team's role.")
+    @app_commands.describe(role = "Select team.")
     @app_commands.command(
         name = "delete", 
         description = "Deletes a team from Database"
@@ -150,6 +157,12 @@ class team(commands.GroupCog, name = "team"):
             if role:
                 await role.delete()
                 await asyncio.sleep(1)
+                
+            owner = discord.utils.get(interaction.guild.members, id = team.owner_id)
+            if owner:
+                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role_id)
+                if owner_role in owner.roles:
+                    await owner.remove_roles(owner_role)
             
             text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
             if text_channel:

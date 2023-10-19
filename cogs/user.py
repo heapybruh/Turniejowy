@@ -37,7 +37,7 @@ class user(commands.GroupCog, name = "user"):
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(
         user = "Select user.",
-        team_role = "Select team's role."
+        team_role = "Select team."
     )
     @app_commands.command(
         name = "add", 
@@ -79,7 +79,7 @@ class user(commands.GroupCog, name = "user"):
     @app_commands.checks.cooldown(1, 1, key = lambda i: (i.guild.id))
     @app_commands.describe(
         user = "Select user.",
-        team_role = "Select team's role."
+        team_role = "Select team."
     )
     @app_commands.command(
         name = "delete", 
