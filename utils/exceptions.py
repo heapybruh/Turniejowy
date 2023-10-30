@@ -10,7 +10,7 @@ class WrongConfig(Exception):
         
 class NoAdmin(Exception):
     def __init__(self):
-        self.message = "You don't have **__Administrator__** permission ."
+        self.message = "You don't have Administrator permission."
         super().__init__(self.message)
         
 class TooSmallTeam(Exception):
@@ -40,7 +40,7 @@ class CommandLimitReached(Exception):
         
 class BotNotSetUp(Exception):
     def __init__(self):
-        self.message = "Bot is not ready! Use **/settings setup** to set it up."
+        self.message = "Bot is not ready! Use /settings setup to set it up."
         super().__init__(self.message)
         
 class WrongRoleColor(Exception):
