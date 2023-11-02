@@ -1,7 +1,7 @@
 import utils
 import discord
 from discord import Member
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 class Settings():
     def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int, teams_channel_id: int, team_owner_role_id: int):

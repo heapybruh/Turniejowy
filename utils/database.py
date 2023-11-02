@@ -1,10 +1,9 @@
-from .models import Team, Settings
+from .models import Team, Settings, Bot
 import sqlite3
 from discord import Member
-from discord.ext import commands
 
 class Database():
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.connect()
     
