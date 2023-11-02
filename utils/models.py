@@ -1,4 +1,7 @@
+import utils
+import discord
 from discord import Member
+from discord.ext import commands, tasks
 
 class Settings():
     def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int, teams_channel_id: int, team_owner_role_id: int):
@@ -19,3 +22,28 @@ class Team():
         self.text_channel_id = text_channel_id
         self.voice_channel_id = voice_channel_id
         self.message_id = message_id
+        
+class Bot(commands.Bot):
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.presences = True
+        intents.members = True
+
+        super().__init__(
+            command_prefix = "/", 
+            intents = intents)
+
+    async def setup_hook(self):
+        for file in utils.Cogs.get():
+            if file.is_dir():
+                continue
+            
+            extension = f"cogs.{file.stem}"
+            await self.load_extension(extension)
+            print(f"[✓] Loaded {extension}")
+
+    async def on_ready(self):
+        await self.tree.sync()
+        await self.change_presence(activity = discord.Activity(type = discord.ActivityType.playing, name = "Helping with Discord Tournaments..."))
+        utils.db = utils.Database(self)
+        print(f"[✓] Discord.py v{discord.__version__} → {self.user} ({self.user.id})")
