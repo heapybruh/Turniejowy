@@ -205,7 +205,7 @@ class team(commands.GroupCog, name = "team"):
                 try:
                     message = await teams_channel.fetch_message(team.message)
                     await message.delete()
-                except:
+                except discord.HTTPException:
                     pass
                 else:
                     await asyncio.sleep(1)
