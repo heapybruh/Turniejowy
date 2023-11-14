@@ -53,7 +53,7 @@ class team(commands.GroupCog, name = "team"):
                 Member(
                     discord = member.id, 
                     guild = member.guild.id
-                ) for member in [
+                ) for member in list(set([
                     member_1, 
                     member_2, 
                     member_3, 
@@ -61,9 +61,8 @@ class team(commands.GroupCog, name = "team"):
                     member_5, 
                     reserve_member_1, 
                     reserve_member_2
-                ] if member is not None
+                ])) if member is not None
             ]
-            member_list = list(set(member_list))
 
             if len(member_list) < 2:
                 raise TooSmallTeam()
