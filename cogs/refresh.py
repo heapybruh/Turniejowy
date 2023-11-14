@@ -17,29 +17,29 @@ class refresh(commands.Cog):
         if len(teams) >= 1:
             for team in teams:
                 try:
-                    settings = utils.db.get_settings(team.guild_id)
+                    settings = utils.db.get_settings(guild = team.guild)
                     if not settings:
                         continue
                     
-                    guild = discord.utils.get(self.bot.guilds, id = team.guild_id)
+                    guild = discord.utils.get(self.bot.guilds, id = team.guild)
                     if not guild:
-                        utils.db.remove_guild_teams(team.guild_id)
+                        utils.db.remove_guild(guild = team.guild)
                     
-                    teams_channel = discord.utils.get(guild.channels, id = settings.teams_channel_id)
+                    teams_channel = discord.utils.get(guild.channels, id = settings.team_list_channel)
                     if not teams_channel:
                         continue
                 
-                    role = discord.utils.get(guild.roles, id = team.role_id)
+                    role = discord.utils.get(guild.roles, id = team.role)
                     if not role:
-                        utils.db.remove_team(team.role_id, team.guild_id)
+                        utils.db.remove_team(team.role, team.guild)
                     
                     team.name = role.name
-                    message = await teams_channel.fetch_message(team.message_id)
+                    message = await teams_channel.fetch_message(team.message)
                     embed = utils.Embed.team(team, role.color)
                     
                     if not message:
                         team_message = await teams_channel.send(embed = embed)
-                        team.message_id = team_message.id
+                        team.message = team_message.id
                     else:
                         await message.edit(embed = embed)
                         

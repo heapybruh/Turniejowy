@@ -1,5 +1,5 @@
 import utils
-from utils import CommandLimitReached, TeamNotFound, UserNotInDatabase, UserAlreadyInTeam, UserNotInSpecifiedTeam, UserIsTeamOwner, TeamUnderstaffed, NoAdmin
+from utils import CommandLimitReached, TeamNotFound, UserNotInDatabase, UserAlreadyInTeam, UserNotInSpecifiedTeam, UserIsTeamOwner, TeamUnderstaffed, NoAdmin, Member
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -22,7 +22,7 @@ class user(commands.GroupCog, name = "user"):
         user: discord.Member
     ):
         try:
-            embed = utils.Embed.user(user, interaction.guild_id)
+            embed = utils.Embed.user(user)
             await interaction.response.send_message(embed = embed)
         except Exception as error:
             embed = utils.Embed.error(error.__str__())
@@ -57,12 +57,14 @@ class user(commands.GroupCog, name = "user"):
             if not team:
                 raise TeamNotFound()
             
-            member_team = utils.db.get_member_team(user, interaction.guild_id)
+            member = Member(discord = user.id, guild = user.guild.id)
+            
+            member_team = utils.db.get_member_team(member)
             if member_team:
                 raise UserAlreadyInTeam()
             
             await user.add_roles(team_role)
-            utils.db.add_to_team(user, team)
+            utils.db.add_to_team(member, team)
             
             embed = utils.Embed.success(f"Successfully added {user.mention} to **{team.name}**!")
             await interaction.response.send_message(embed = embed)
@@ -99,13 +101,15 @@ class user(commands.GroupCog, name = "user"):
             if not team:
                 raise TeamNotFound()
             
-            if team.owner_id == user.id:
+            if team.owner == user.id:
                 raise UserIsTeamOwner()
             
             if (len(team.members) - 1) == 1:
                 raise TeamUnderstaffed()
             
-            member_team = utils.db.get_member_team(user, interaction.guild_id)
+            member = Member(discord = user.id, guild = user.guild.id)
+            
+            member_team = utils.db.get_member_team(member)
             if not member_team:
                 raise UserNotInDatabase()
             
@@ -113,7 +117,7 @@ class user(commands.GroupCog, name = "user"):
                 raise UserNotInSpecifiedTeam()
 
             await user.remove_roles(team_role)
-            utils.db.remove_from_team(user, team)
+            utils.db.remove_from_team(member, team)
             
             embed = utils.Embed.success(f"Successfully removed {user.mention} from **{team.name}**!")
             await interaction.response.send_message(embed = embed)

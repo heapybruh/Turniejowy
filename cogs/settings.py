@@ -41,7 +41,7 @@ class settings(commands.GroupCog, name = "settings"):
     @app_commands.describe(
         text_category = "Select category for text channels.",
         voice_category = "Select category for voice channels.",
-        teams_channel = "Select channel in which teams will be listed.",
+        team_list_channel = "Select channel in which teams will be listed.",
         team_owner_role = "Select role that is given only to team owners."
     )
     @app_commands.command(
@@ -53,7 +53,7 @@ class settings(commands.GroupCog, name = "settings"):
         interaction: discord.Interaction,
         text_category: discord.CategoryChannel,
         voice_category: discord.CategoryChannel,
-        teams_channel: discord.TextChannel,
+        team_list_channel: discord.TextChannel,
         team_owner_role: discord.Role = None
     ):
         try:
@@ -62,10 +62,26 @@ class settings(commands.GroupCog, name = "settings"):
             
             settings = utils.db.get_settings(interaction.guild_id)
             if not settings:
-                utils.db.add_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id, team_owner_role.id if team_owner_role != None else 0))                
+                utils.db.add_settings(
+                    Settings(
+                        guild = interaction.guild_id, 
+                        text_category = text_category.id, 
+                        voice_category = voice_category.id, 
+                        team_list_channel = team_list_channel.id, 
+                        team_owner_role = team_owner_role.id if team_owner_role != None else 0
+                    )
+                )                
                 embed = utils.Embed.success("Successfully created settings.")
             else:
-                utils.db.update_settings(Settings(interaction.guild_id, text_category.id, voice_category.id, teams_channel.id, team_owner_role.id if team_owner_role != None else 0))
+                utils.db.update_settings(
+                    Settings(
+                        guild = interaction.guild_id, 
+                        text_category = text_category.id, 
+                        voice_category = voice_category.id, 
+                        team_list_channel = team_list_channel.id, 
+                        team_owner_role = team_owner_role.id if team_owner_role != None else 0
+                    )
+                )
                 embed = utils.Embed.success("Successfully updated settings.")
                 
             await interaction.response.send_message(embed = embed)

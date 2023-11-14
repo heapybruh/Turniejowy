@@ -1,5 +1,5 @@
 import utils
-from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor, Team, UserAlreadyInTeam
+from utils import NoAdmin, TooSmallTeam, TeamNotFound, CommandLimitReached, BotNotSetUp, WrongRoleColor, Team, UserAlreadyInTeam, Member
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -45,11 +45,25 @@ class team(commands.GroupCog, name = "team"):
             if not interaction.user.guild_permissions.administrator:
                 raise NoAdmin()
 
-            settings = utils.db.get_settings(interaction.guild_id)
+            settings = utils.db.get_settings(guild = interaction.guild_id)
             if not settings:
                 raise BotNotSetUp()
 
-            member_list = list(set([x for x in [member_1, member_2, member_3, member_4, member_5, reserve_member_1, reserve_member_2] if x is not None]))
+            member_list = [
+                Member(
+                    discord = member.id, 
+                    guild = member.guild.id
+                ) for member in [
+                    member_1, 
+                    member_2, 
+                    member_3, 
+                    member_4, 
+                    member_5, 
+                    reserve_member_1, 
+                    reserve_member_2
+                ] if member is not None
+            ]
+            member_list = list(set(member_list))
 
             if len(member_list) < 2:
                 raise TooSmallTeam()
@@ -57,35 +71,41 @@ class team(commands.GroupCog, name = "team"):
             if len(role_color) != 7:
                 raise WrongRoleColor()
             
-            if settings.team_owner_role_id != 0:
-                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role_id)
+            if settings.team_owner_role != 0:
+                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role)
                 if not owner_role:
                     raise BotNotSetUp()
             
                 await member_1.add_roles(owner_role)
-            
-            for x in member_list:
-                member_team = utils.db.get_member_team(x, interaction.guild_id)
+
+            for member in member_list:
+                member_team = utils.db.get_member_team(Member(discord = member.id, guild = member.guild))
                 if member_team:
                     raise UserAlreadyInTeam()
             
             color = ImageColor.getrgb(role_color)
-            role_color = discord.Colour.from_rgb(color[0], color[1], color[2])
+            role_color = discord.Colour.from_rgb(r = color[0], g = color[1], b = color[2])
 
-            role = await interaction.guild.create_role(name = team_name, permissions = discord.Permissions.none(), colour = role_color, hoist = True, display_icon = None, mentionable = False)
+            role = await interaction.guild.create_role(
+                name = team_name, 
+                permissions = discord.Permissions.none(), 
+                colour = role_color, 
+                hoist = True, 
+                display_icon = None, 
+                mentionable = False
+            )
 
             for member in member_list:
-                await member.add_roles(role)
+                member_discord = await interaction.guild.fetch_member(member.discord)
+                await member_discord.add_roles(role)
                 
             permissions_everyone = discord.PermissionOverwrite()
             permissions_everyone.read_messages = False
-            permissions_everyone.connect = False
             permissions_team = discord.PermissionOverwrite()
             permissions_team.read_messages = True
-            permissions_everyone.connect = True
 
-            text_category = discord.utils.get(interaction.guild.categories, id = settings.text_category_id)
-            voice_category = discord.utils.get(interaction.guild.categories, id = settings.voice_category_id)
+            text_category = discord.utils.get(interaction.guild.categories, id = settings.text_category)
+            voice_category = discord.utils.get(interaction.guild.categories, id = settings.voice_category)
 
             text_channel = await text_category.create_text_channel(team_name)
             
@@ -105,13 +125,20 @@ class team(commands.GroupCog, name = "team"):
             
             await asyncio.sleep(1)
             
-            team_id = utils.db.last_team_id() + 1
-            team = Team(team_id, role.id, interaction.guild_id, member_list, team_name, member_1.id, text_channel.id, voice_channel.id)
+            team = Team(
+                role = role.id, 
+                guild = interaction.guild_id, 
+                members = member_list, 
+                name = team_name, 
+                owner = member_1.id, 
+                text_channel = text_channel.id, 
+                voice_channel = voice_channel.id
+            )
             
-            teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
+            team_list = discord.utils.get(interaction.guild.channels, id = settings.team_list_channel)
             team_embed = utils.Embed.team(team, role_color)
-            message = await teams_channel.send(embed = team_embed)
-            team.message_id = message.id
+            message = await team_list.send(embed = team_embed)
+            team.message = message.id
             
             utils.db.add_team(team)
         except Exception as error:
@@ -153,31 +180,31 @@ class team(commands.GroupCog, name = "team"):
             if not team:
                 raise TeamNotFound()
             
-            role = discord.utils.get(interaction.guild.roles, id = team.role_id)
+            role = discord.utils.get(interaction.guild.roles, id = team.role)
             if role:
                 await role.delete()
                 await asyncio.sleep(1)
                 
-            owner = discord.utils.get(interaction.guild.members, id = team.owner_id)
+            owner = discord.utils.get(interaction.guild.members, id = team.owner)
             if owner:
-                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role_id)
+                owner_role = discord.utils.get(interaction.guild.roles, id = settings.team_owner_role)
                 if owner_role in owner.roles:
                     await owner.remove_roles(owner_role)
             
-            text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel_id)
+            text_channel = discord.utils.get(interaction.guild.channels, id = team.text_channel)
             if text_channel:
                 await text_channel.delete()
                 await asyncio.sleep(1)
             
-            voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel_id)
+            voice_channel = discord.utils.get(interaction.guild.channels, id = team.voice_channel)
             if voice_channel:
                 await voice_channel.delete()
                 await asyncio.sleep(1)
             
-            teams_channel = discord.utils.get(interaction.guild.channels, id = settings.teams_channel_id)
+            teams_channel = discord.utils.get(interaction.guild.channels, id = settings.team_list_channel)
             if teams_channel:
                 try:
-                    message = await teams_channel.fetch_message(team.message_id)
+                    message = await teams_channel.fetch_message(team.message)
                     await message.delete()
                 except:
                     pass

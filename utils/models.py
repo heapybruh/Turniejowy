@@ -1,27 +1,45 @@
 import utils
 import discord
-from discord import Member
 from discord.ext import commands
+from typing import List
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 
-class Settings():
-    def __init__(self, guild_id: int, text_category_id: int, voice_category_id: int, teams_channel_id: int, team_owner_role_id: int):
-        self.guild_id = guild_id
-        self.text_category_id = text_category_id
-        self.voice_category_id = voice_category_id
-        self.teams_channel_id = teams_channel_id
-        self.team_owner_role_id = team_owner_role_id
+class TableBase(DeclarativeBase):
+    pass
 
-class Team():
-    def __init__(self, id: int, role_id: int, guild_id: int, members: list[Member], name: str, owner_id: int, text_channel_id: int, voice_channel_id: int, message_id: int = 0):
-        self.id = id
-        self.role_id = role_id
-        self.guild_id = guild_id
-        self.members = members        
-        self.name = name
-        self.owner_id = owner_id
-        self.text_channel_id = text_channel_id
-        self.voice_channel_id = voice_channel_id
-        self.message_id = message_id
+class Settings(TableBase):
+    __tablename__ = "settings"
+    
+    id: Mapped[int] = mapped_column(primary_key = True)
+    guild: Mapped[int] = mapped_column()
+    text_category: Mapped[int] = mapped_column()
+    voice_category: Mapped[int] = mapped_column()
+    team_list_channel: Mapped[int] = mapped_column()
+    team_owner_role: Mapped[int] = mapped_column()
+
+class Team(TableBase):
+    __tablename__ = "team"
+    
+    id: Mapped[int] = mapped_column(primary_key = True)
+    role: Mapped[int] = mapped_column()
+    guild: Mapped[int] = mapped_column()
+    members: Mapped[List["Member"]] = relationship(back_populates = "team", cascade = "all, delete-orphan")
+    name: Mapped[str] = mapped_column()
+    owner: Mapped[int] = mapped_column()
+    text_channel: Mapped[int] = mapped_column()
+    voice_channel: Mapped[int] = mapped_column()
+    message: Mapped[int] = mapped_column(default = 0)
+    
+class Member(TableBase):
+    __tablename__ = "member"
+    
+    id: Mapped[int] = mapped_column(primary_key = True)
+    discord: Mapped[int] = mapped_column()
+    guild: Mapped[int] = mapped_column()
+    team_id: Mapped[int] = mapped_column(ForeignKey("team.id"))
+    
+    team: Mapped["Team"] = relationship(back_populates = "members")
         
 class Bot(commands.Bot):
     def __init__(self):
@@ -40,10 +58,10 @@ class Bot(commands.Bot):
             
             extension = f"cogs.{file.stem}"
             await self.load_extension(extension)
-            print(f"[✓] Loaded {extension}")
+            print(f"Loaded {extension}")
 
     async def on_ready(self):
         await self.tree.sync()
         await self.change_presence(activity = discord.Activity(type = discord.ActivityType.playing, name = "Helping with Discord Tournaments..."))
         utils.db = utils.Database(self)
-        print(f"[✓] Discord.py v{discord.__version__} → {self.user} ({self.user.id})")
+        print(f"Discord.py v{discord.__version__} → {self.user} ({self.user.id})")
