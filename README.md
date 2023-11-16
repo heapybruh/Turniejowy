@@ -10,6 +10,7 @@
   ```
   discord.py
   Pillow
+  SQLAlchemy
   ```
 
 ## How to use?
