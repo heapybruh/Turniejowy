@@ -1,6 +1,6 @@
 <div align="center">
  <h1>Turniejowy</h1>
- <p>Discord Bot that helps you manage Tournaments and its teams</p>
+ <p>Discord Bot that helps you manage Tournaments and its teams.</p>
 </div>
 
 ## Requirements
