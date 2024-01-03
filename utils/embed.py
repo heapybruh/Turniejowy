@@ -4,7 +4,7 @@ from .models import Team, Member
 import discord
 from datetime import datetime
 
-class Embed:
+class Embed():
     def user(member: discord.Member):
         if utils.db == None:
             return Embed.error(DatabaseNotConnected().__str__())
